@@ -17,13 +17,13 @@ $$
 - **Trace of Hessian**:
 
 $$
-\operatorname{tr}(H)\;=\;\sum_i \lambda_i(H).
+\mathrm{tr}(H)\;=\;\sum_i \lambda_i(H).
 $$
 
 Estimated with Hutchinson’s estimator:
 
 $$
-\operatorname{tr}(H)\;\approx\;\frac{1}{K}\sum_{k=1}^K v_k^\top H v_k,\quad v_k\sim \mathcal{N}(0,I).
+\mathrm{tr}(H)\;\approx\;\frac{1}{K}\sum_{k=1}^K v_k^\top H v_k,\quad v_k\sim \mathcal{N}(0,I).
 $$
   - Implemented in `src/utilities.py:get_trace`.
 
@@ -37,7 +37,7 @@ $$
 This is implemented as:
 
 $$
--\rho\|g\|^2+\frac{\rho^2}{2}g^\top Hg \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3)
+-\rho\|g\|^2+\frac{\rho^2}{2}g^\top Hg \;+\; \frac{\rho^2\sigma^2}{2N_s}\mathrm{tr}(H^3)
 $$
   in `src/utilities.py:second_order_loss_expansion`.
 
