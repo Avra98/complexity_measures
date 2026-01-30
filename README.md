@@ -45,8 +45,8 @@ $$
 Some scripts expect these environment variables:
 
 ```bash
-export RESULTS=/egr/research-slim/ghoshavr/complexity_measures_study/RESULTS
-export DATASETS=/egr/research-slim/ghoshavr/complexity_measures_study/DATASETS
+export RESULTS=/complexity_measures_study/RESULTS
+export DATASETS=/complexity_measures_study/DATASETS
 ```
 
 ## Run: grokking (modular addition)
@@ -54,13 +54,13 @@ export DATASETS=/egr/research-slim/ghoshavr/complexity_measures_study/DATASETS
 Quick run (CPU):
 
 ```bash
-python /egr/research-slim/ghoshavr/complexity_measures_study/run_grokking.py --device cpu
+python complexity_measures_study/run_grokking.py --device cpu
 ```
 
 GPU run + sharpness logging (prints sharpness every `--sharpness_every` steps):
 
 ```bash
-python /egr/research-slim/ghoshavr/complexity_measures_study/run_grokking.py \
+python complexity_measures_study/run_grokking.py \
   --device 7 --sharpness --sharpness_every 200 --steps 20000
 ```
 
@@ -74,7 +74,7 @@ Outputs go to:
 Example: ResNet-32 on CIFAR-10 (10k training subset), compute Hessian measures every 200 steps and save periodically:
 
 ```bash
-python /egr/research-slim/ghoshavr/complexity_measures_study/src/gd.py \
+python /complexity_measures_study/src/gd.py \
   --dataset cifar10-10k \
   --arch_id resnet32 \
   --loss ce \
