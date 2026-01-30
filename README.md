@@ -69,15 +69,15 @@ Outputs go to:
 - `RESULTS/grokking/.../metrics.pt`
 - `RESULTS/grokking/.../metrics.png`
 
-## Run: ResNet on CIFAR (GD loop + complexity measures)
+## Run: CIFAR (GD loop + complexity measures)
 
-Example: ResNet-32 on CIFAR-10 (10k training subset), compute Hessian measures every 200 steps and save periodically:
+Example: fully-connected network on CIFAR-10 (10k training subset), with **MSE loss**, compute Hessian measures every 200 steps and save periodically:
 
 ```bash
 python /complexity_measures_study/src/gd.py \
   --dataset cifar10-10k \
-  --arch_id resnet32 \
-  --loss ce \
+  --arch_id fc-tanh \
+  --loss mse \
   --opt gd \
   --lr 0.05 \
   --max_steps 2000 \
@@ -92,5 +92,17 @@ Saved tensors include:
 - `trace_hessian`
 - `second_order_loss`
 - `train_loss`, `test_loss`, `train_acc`, `test_acc`
+
+Example output (train/test + sharpness + trace):
+
+![CIFAR-10 FC (MSE): loss/acc + sharpness + trace](figures/cifar10_fc_tanh_mse_summary.png)
+
+## Plot-only (no retraining)
+
+If you already ran `src/gd.py` once and have a results directory containing saved tensors (e.g. `train_loss`, `test_loss`, `eigs`, `trace_hessian`), you can regenerate a summary plot without training again:
+
+```bash
+python /complexity_measures_study/plot_gd_results.py --dir /path/to/RESULTS/.../after_nips_rebuttal
+```
 
 
