@@ -4,34 +4,41 @@ Minimal code to study optimization dynamics and **complexity / sharpness measure
 
 ## Complexity measures (what we log / plot)
 
-Let \(L(\theta)\) be the (empirical) training loss, \(g=\nabla_\theta L(\theta)\), and \(H=\nabla_\theta^2 L(\theta)\).
+Let $L(\theta)$ be the (empirical) training loss, $g=\nabla_\theta L(\theta)$, and $H=\nabla_\theta^2 L(\theta)$.
 
 - **Sharpness** (spectral norm / top Hessian eigenvalue):
-  \[
-  \text{sharpness} \;\equiv\; \lambda_{\max}(H).
-  \]
+
+$$
+\text{sharpness} \;\equiv\; \lambda_{\max}(H).
+$$
   - Implemented via Hessian–vector products + Lanczos (`src/utilities.py:get_hessian_eigenvalues`).
   - In grokking we estimate \(\lambda_{\max}(H)\) by power iteration on HVPs.
 
 - **Trace of Hessian**:
-  \[
-  \operatorname{tr}(H)\;=\;\sum_i \lambda_i(H).
-  \]
-  Estimated with Hutchinson’s estimator:
-  \[
-  \operatorname{tr}(H)\;\approx\;\frac{1}{K}\sum_{k=1}^K v_k^\top H v_k,\quad v_k\sim \mathcal{N}(0,I).
-  \]
+
+$$
+\operatorname{tr}(H)\;=\;\sum_i \lambda_i(H).
+$$
+
+Estimated with Hutchinson’s estimator:
+
+$$
+\operatorname{tr}(H)\;\approx\;\frac{1}{K}\sum_{k=1}^K v_k^\top H v_k,\quad v_k\sim \mathcal{N}(0,I).
+$$
   - Implemented in `src/utilities.py:get_trace`.
 
 - **Second-order loss expansion (one step, with cubic correction)**:
-  \[
-  -\rho\, g^\top\!\left(I-\frac{\rho}{2}H\right)g \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3),
-  \qquad \sigma^2=\frac{1}{h_0\,\mathrm{ess}}.
-  \]
-  This is implemented as:
-  \[
-  -\rho\|g\|^2+\frac{\rho^2}{2}g^\top Hg \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3)
-  \]
+
+$$
+-\rho\, g^\top\!\left(I-\frac{\rho}{2}H\right)g \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3),
+\qquad \sigma^2=\frac{1}{h_0\,\mathrm{ess}}.
+$$
+
+This is implemented as:
+
+$$
+-\rho\|g\|^2+\frac{\rho^2}{2}g^\top Hg \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3)
+$$
   in `src/utilities.py:second_order_loss_expansion`.
 
 ## Repository layout
