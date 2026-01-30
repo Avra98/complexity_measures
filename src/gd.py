@@ -57,6 +57,7 @@ def main(dataset: str = "cifar10-10k", arch_id: str = "resnet32", loss: str = "c
     rhs_values = torch.zeros(max_steps // eig_freq if eig_freq >= 0 else 0, device=device)
     hcrits = torch.zeros(max_steps // eig_freq if eig_freq >= 0 else 0, neigs)
     second_order_loss = torch.zeros(max_steps // eig_freq if eig_freq >= 0 else 0, device=device)
+    trace_hessian = torch.zeros(max_steps // eig_freq if eig_freq >= 0 else 0, device=device)
 
 
 
@@ -72,6 +73,25 @@ def main(dataset: str = "cifar10-10k", arch_id: str = "resnet32", loss: str = "c
                                                                   physical_batch_size=physical_batch_size, device=device )
             #pre_eigs[step // eig_freq, :] = get_preconditioned_hessian_eigenvalues(network, loss_fn, abridged_train, optimizer, neigs=neigs, device=device)
             print("eigenvalues: ", eigs[step//eig_freq, :])
+            # Additional complexity measures (computed on the abridged training set)
+            trace_hessian[step // eig_freq] = get_trace(
+                network, loss_fn, abridged_train,
+                physical_batch_size=physical_batch_size,
+                n_iters=50,
+                device=device,
+            )
+            second_order_loss[step // eig_freq] = second_order_loss_expansion(
+                network, loss_fn, abridged_train,
+                lr=lr,
+                post_samples=post_samples,
+                h0=h0,
+                ess=ess,
+                physical_batch_size=physical_batch_size,
+                device=device,
+                n_iters=50,
+            )
+            print("trace(H):", float(trace_hessian[step // eig_freq].item()))
+            print("second_order_loss_expansion:", float(second_order_loss[step // eig_freq].item()))
            # if opt=="ivon":
             #     neg_elbo[step // eig_freq] = compute_neg_elbo(optimizer, ess,weight_decay, network, [loss_fn, acc_fn], train_dataset, 
             #                                                     batch_size=physical_batch_size, device=device )
@@ -108,7 +128,9 @@ def main(dataset: str = "cifar10-10k", arch_id: str = "resnet32", loss: str = "c
                                 ("train_loss", train_loss[:step]), ("test_loss", test_loss[:step]),
                                 #("neg-elbo", neg_elbo[:step // eig_freq]),
                                 ("pre-eigs", pre_eigs[:step // eig_freq]),
-                                ("train_acc", train_acc[:step]), ("test_acc", test_acc[:step])])
+                                ("train_acc", train_acc[:step]), ("test_acc", test_acc[:step]),
+                                ("trace_hessian", trace_hessian[:step // eig_freq]),
+                                ("second_order_loss", second_order_loss[:step // eig_freq])])
                                 #("second_order_loss", second_order_loss[:step // eig_freq]))
                                 # ("rhs_values", rhs_values[:step // eig_freq])])
         if step % 50 == 0:
@@ -153,7 +175,9 @@ def main(dataset: str = "cifar10-10k", arch_id: str = "resnet32", loss: str = "c
                       ("pre-eigs", pre_eigs[:step // eig_freq]),
                       ("neg-elbo", neg_elbo[:step // eig_freq]),
                       ("train_loss", train_loss[:step + 1]), ("test_loss", test_loss[:step + 1]),
-                      ("train_acc", train_acc[:step + 1]), ("test_acc", test_acc[:step + 1]),("seoncd_order_loss", second_order_loss[:step + 1])]),
+                      ("train_acc", train_acc[:step + 1]), ("test_acc", test_acc[:step + 1]),
+                      ("trace_hessian", trace_hessian[:(step + 1) // eig_freq]),
+                      ("second_order_loss", second_order_loss[:(step + 1) // eig_freq])]),
                       #("scaled_losses",scaled_losses[:(step + 1) // eig_freq]),("rhs_values",rhs_values[:(step + 1) // eig_freq])])
     if save_model:
         torch.save(network.state_dict(), f"{directory}/snapshot_final")
