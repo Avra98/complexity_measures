@@ -27,19 +27,6 @@ $$
 $$
   - Implemented in `src/utilities.py:get_trace`.
 
-- **Second-order loss expansion (one step, with cubic correction)**:
-
-$$
--\rho\, g^\top\!\left(I-\frac{\rho}{2}H\right)g \;+\; \frac{\rho^2\sigma^2}{2N_s}\operatorname{tr}(H^3),
-\qquad \sigma^2=\frac{1}{h_0\,\mathrm{ess}}.
-$$
-
-This is implemented as:
-
-$$
--\rho\|g\|^2+\frac{\rho^2}{2}g^\top Hg \;+\; \frac{\rho^2\sigma^2}{2N_s}\mathrm{tr}(H^3)
-$$
-  in `src/utilities.py:second_order_loss_expansion`.
 
 ## Repository layout
 
